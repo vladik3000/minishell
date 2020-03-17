@@ -5,42 +5,44 @@
 #                                                     +:+ +:+         +:+      #
 #    By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2019/09/26 16:06:00 by fmallist          #+#    #+#              #
-#    Updated: 2020/02/08 21:25:00 by fmallist         ###   ########.fr        #
+#    Created: 2019/09/04 20:24:18 by fmallist          #+#    #+#              #
+#    Updated: 2020/03/10 19:58:28 by fmallist         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = libftprintf.a
-LIBFTA = libft.a
-SRCS = buffer_mgmt.c ft_printf.c fill_options.c itoa_base_buff.c handle_overflow_buffer.c get_integer.c handle_integers.c \
-		itoa_base_extra_funcs.c itoa_base_buff_u.c handle_unsigned.c get_unsigned.c ftoa.c ftoa_base_buff.c \
-		printing_floats.c long_arithmetics.c handle_octals.c handle_hexdecimals.c handle_bighex.c \
-		get_specifiers.c handle_floats.c handle_csp.c fill_ldbl_arrays.c fill_float_arrays.c \
-		hanlde_uhex.c handle_ubighex.c handle_uoctal.c utoa_base_buff_ox.c handle_strings.c bonuses.c
-OBJ = $(SRCS:.c=.o)
-LIBDIR = libft/
-LIBNAME = libft/libft.a
+NAME=libft.a
+
+HEADER = libft.h
+
+SRC = 	ft_isspace.c			ft_lstreverse.c			ft_putchar.c			ft_strcapitalize.c		ft_striteri.c			ft_strnew.c \
+		ft_itoa.c				ft_lstsize.c			ft_putchar_fd.c			ft_strcat.c				ft_strjoin.c			ft_strnstr.c \
+		ft_memalloc.c           ft_putendl.c            ft_strchr.c             ft_strlcat.c            ft_strrchr.c			ft_itoa_base.c ft_numlen.c\
+		ft_atoi.c               ft_lstadd.c             ft_memccpy.c            ft_putendl_fd.c         ft_strclr.c             ft_strlen.c             ft_strsplit.c \
+		ft_bzero.c              ft_lstat.c              ft_memchr.c             ft_putnbr.c             ft_strcmp.c             ft_strmap.c             ft_strstr.c \
+		ft_isalnum.c            ft_lstdel.c             ft_memcmp.c             ft_putnbr_fd.c          ft_strcpy.c             ft_strmapi.c            ft_strsub.c \
+		ft_isalpha.c            ft_lstdelone.c          ft_memcpy.c             ft_putstr.c             ft_strdel.c             ft_strncat.c            ft_strtrim.c \
+		ft_isascii.c            ft_lstiter.c            ft_memdel.c             ft_putstr_fd.c          ft_strdup.c             ft_strncmp.c            ft_tolower.c \
+		ft_isdigit.c            ft_lstmap.c             ft_memmove.c            ft_sort_int_tab.c       ft_strequ.c             ft_strncpy.c            ft_toupper.c \
+		ft_isprint.c            ft_lstnew.c             ft_memset.c             ft_str_is_printable.c   ft_striter.c            ft_strnequ.c 			ft_strjoin_free.c\
+		ft_tree_funcs_1.c ft_tree_funcs_2.c ft_numlen_hu.c ft_strtok.c get_next_line.c ft_pow.c ft_primes.c ft_strlen_fp.c
+
 CFLAGS = -Wall -Wextra -Werror
 
-all: $(NAME)
+OBJECTS = $(SRC:.c=.o)
 
-$(OBJ): %.o: %.c
-	@gcc -c $(CFLAGS) $< -o $@
+all:$(NAME)
 
-$(NAME): $(OBJ)
-	@make -C $(LIBDIR)
-	@cp libft/libft.a ./$(NAME)
-	@ar rc $(NAME) $(OBJ)
-	@mv $(NAME) libft.a
+$(NAME): $(OBJECTS)
+	@ar rc $(NAME) $(OBJECTS)
+	@echo !!!LIBRARY IS READY!!!
+
+%.o: %.c
+	gcc -g $(CFLAGS) -c -o $@ $<
+
 clean:
-	@/bin/rm -f $(OBJ)
-	@make -C $(LIBDIR) clean
-
-test:
-	@gcc *.c -L libft -lft -o test
+	@/bin/rm -f $(OBJECTS)
 
 fclean: clean
-	@/bin/rm -f libft.a
-	@make -C $(LIBDIR) fclean
+	@/bin/rm -f $(NAME)
 
 re: fclean all

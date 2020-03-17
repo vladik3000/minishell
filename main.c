@@ -6,153 +6,94 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/10 19:15:05 by fmallist          #+#    #+#             */
-/*   Updated: 2020/02/12 22:06:25 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/03/16 18:41:54 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdlib.h>
-#include "libft/ft_printf.h"
-#include <limits.h>
-#include <sys/types.h>
-#include <sys/dir.h>
-#include <errno.h>
+#include "minishell.h"
 
-void error(char *msg)
+
+int is_prompt;
+
+void	handle_interrupt(int pid)
 {
-	write(2, "minishell:", ft_strlen("minishell:"));
-	write(2, msg, ft_strlen(msg));
-	write(2, "\n", 1);
-	exit(-1);
+	ft_printf("\n$> ");
+	is_prompt = 0;
 }
 
-void	delete_table(char **table)
+int	check_file_to_exec(char *path)
 {
-	int i;
+	struct stat statbuf;
 
-	i = 0;
-	while (table[i])
+	if (access(path, F_OK)== -1)
 	{
-		ft_memdel((void *)&table[i]);
-		i++;
-	}
-	free(table);
-	table = NULL;
-}
-
-int		find_path(char **envp)
-{
-	int i;
-
-	i = 0;
-	while (envp[i] && *envp[i])
-	{
-		if (*envp[i] == 'P' && *(envp[i] + 1) == 'A'
-		&& *(envp[i] + 2) == 'T' && *(envp[i] + 3) == 'H')
-			break ;
-		i++;
-	}
-	return (i);
-}
-
-char	*append_path(char *path, char *arg)
-{
-	char *prefix;
-
-	if (ft_strchr(arg, '/'))
-		return (arg);
-	if (!(prefix = ft_strjoin(path, "/")))
-		error("malloc: failed to allocate memory");
-	if (!(prefix = ft_strjoin_free(prefix, arg)))
-		error("malloc: failed to allocate memory");
-	return (prefix);
-	
-}
-
-int	execute(char *path, char **av, char **envp)
-{
-	pid_t pid;
-	int i = 0;
-	//ft_printf("path[%s]\n", path);
-	if (access(path, F_OK) == -1)
-	{
-		//ft_printf("no\n");
+		ft_printf_fd(STDERR_FILENO, "minishell: no such file or directory: %s\n", path);
+		is_prompt = 1;
 		return (-1);
 	}
-	ft_printf("path:[%s]\n", path);
-	while (av[i])
+	else if (access(path, X_OK) == -1)
 	{
-		ft_printf("av[%d]: {%s}\n", i, av[i]);
-		i++;
+		ft_printf_fd(STDERR_FILENO, "minishell: %s: Permission denied\n", path);
+		is_prompt = 1;
+		return (-1);
 	}
+	lstat(path, &statbuf);
+	if ((statbuf.st_mode & S_IFMT) == S_IFDIR)
+	{
+		ft_printf_fd(STDERR_FILENO, "minishell: %s: is a directory\n", path);
+		is_prompt = 1;
+		return (-1);
+	}
+	return (0);
+}
+
+int	execute(char *path, char **av, char **env)
+{
+	pid_t	pid;
+	int		i;
+
 	i = 0;
-	while (envp[i])
-	{
-		ft_printf("env[%d]: {%s}\n", i, envp[i]);
-		i++;
-	}
+	if (check_file_to_exec(path) == -1)
+		return (-1);
 	if ((pid = fork()) == 0)
 	{
-		if (execve(path, av, envp) == -1)
-			ft_printf("errno:%d NOOOO\n", errno);
+		if (execve(path, av, env) == -1)
+			ft_printf_fd(STDERR_FILENO, "minishell: %s: exec format error\n", path);
 	}
 	else if (pid < 0)
-		ft_printf("fork fail");
+		ft_printf_fd(STDERR_FILENO, "minishell: fork: failed to fork a process");
 	else
 	{
+		is_prompt = 1;
 		wait(0);
 	}
-	
 	return (1);
 }
 
-void	search(char **paths, char **arg, char **env)
+void	search(char **arg, char **env, t_hash_table *ht)
 {
-	int j;
-	int found;
-	char *path;
-
-	j = 0;
-	found = 0;
-	while (found != 1)
+	char *cmd;
+	
+	if (!ft_strchr(arg[0], '/'))
 	{
-		path = append_path(paths[j], *arg);
-		if (execute(path, arg, env) != -1)
-		{
-			found = 1;
-			//ft_memdel((void *)&path);
-		}
-		j++;
+		if (!(cmd = ht_search(ht, arg[0])))
+			{
+				ft_printf_fd(STDERR_FILENO, "minishell: command not found: %s\n", arg[0]);
+				return ;
+			}
 	}
+	else
+		cmd = arg[0];
+	execute(cmd, arg, env);
 }
 
-void	search_for_command(char **args, char **envp)
+void	exec_command(char **args, char **env, t_hash_table *ht)
 {
-	int		found;
-	int		i;
-	int		j;
-	char	**to_search;
-
-	found = 1;
-	j = 0;
-	i = find_path(envp);
-	if (!(to_search = ft_strsplit(envp[i] + 5, ':')))
-		error("malloc: failed to allocate memory");
-	//while (found)
-	//{
-	search(to_search, args, envp);
-	//delete_table(to_search);
-	//}
-}
-
-
-void	exec_command(char **args, char **envp)
-{
-	search_for_command(args, envp);
+	search(args, env, ht);
 	
 }
 
-void handle_input(char *input, char **envp)
+void	handle_input(char *input, char ***env, t_hash_table **ht)
 {
 	int i;
 	int flag;
@@ -160,8 +101,7 @@ void handle_input(char *input, char **envp)
 
 	flag = 0;
 	i = 0;
-	ft_printf("input:[%s]\n", input);
-	while (input[i++])
+	while (input[i])
 	{
 		if (!ft_isspace(input[i]))
 			flag = 1;
@@ -170,37 +110,26 @@ void handle_input(char *input, char **envp)
 	if (flag)
 	{
 		if (input && *input)
-			if (!(args = ft_split_whitespaces(input)))
-				error("malloc: failed to allocate memory");
+			if (!(args = ft_strtok(input, &ft_isspace)))
+				malloc_error();
+		replace_envs(&args, *env);
 		if (args[0] != 0)
-			exec_command(args, envp);
-		delete_table(args);
+		{
+			if (check_builtin(args, env, ht))
+			{	
+				delete_table(&args);
+				return ;
+			}
+			else
+				exec_command(args, *env, *ht);
+			delete_table(&args);
+		}
+		if (args)
+			delete_table(&args);
 	}
 }
 
-void	init_ev(char ***my_table, char **envp)
-{
-	int i;
-	int j;
-	
-	i = 0;
-	j = 0;
-	while (envp[j])
-		j++;
-	if (!(*my_table = (char **)ft_memalloc(sizeof(char *) * (j + 1))))
-		error("malloc: failed to allocate memory");
- 	while (*envp)
- 	{
- 		if (!((*my_table)[i] = ft_strdup(*envp)))
-		 	error("malloc: failed to allocate memory");
- 		i++;
- 		envp++;
- 	}
-	 (*my_table)[i] = NULL;
-}
-
-
-void	minishell(char **ev)
+void	minishell(char ***ev, t_hash_table **ht)
 {
 	char	*line;
 	int		status;
@@ -208,21 +137,33 @@ void	minishell(char **ev)
 	status = 1;
 	while (status)
 	{
-		ft_printf("$> ");
-		get_next_line(0, &line);
-		handle_input(line, ev);
-		//ft_printf("uhm\n");
-		//delete_table(ev);
+		if (is_prompt)
+			ft_printf("$> ");
+		is_prompt = 1;
+		if (get_next_line(STDIN_FILENO, &line) == -1)
+		{
+			malloc_error();
+		}
+		if (!line)
+			continue ;
+		handle_input(line, ev, ht);
 		ft_strdel(&line);
 	}
 	delete_table(ev);
 }
 
-int main(int ac, char **av, char **envp)
+int main(int ac, char **av, char **environ)
 {
 	char **ev;
-	
-	init_ev(&ev, envp);
-	minishell(ev);
+	t_hash_table *ht;
+	is_prompt = 1;
+
+	ht = NULL;
+	ht = ht_new_sized(10);
+	//signal(SIGINT, handle_interrupt);
+	if (init_binaries(&ht, environ) == PATH_NOTFOUND)
+		ht = NULL;
+	init_ev(&ev, environ);
+	minishell(&ev, &ht);
 	return (0);
 }

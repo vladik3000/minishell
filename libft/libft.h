@@ -6,7 +6,7 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/04 20:03:16 by fmallist          #+#    #+#             */
-/*   Updated: 2020/02/12 19:20:04 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/03/10 19:58:49 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 
-# define BUFF_SIZE 1
+# define BUFF_SIZE 4
 
 typedef struct	s_list
 {
@@ -111,7 +111,11 @@ void			ft_tree_apply_infix_options(t_tree *root,
 				void *options, void (*applyf)(void *, void *));
 uint64_t		ft_tree_count_nodes(const t_tree *root);
 size_t			ft_numlen_hu(unsigned short n);
-int				get_next_line(int fd, char **line);
-char			**ft_split_whitespaces(const char *s);
+char			**ft_strtok(char const *s, int (*f)(int));
+int				get_next_line(const int fd, char **line);
+long long		ft_pow(long long n, size_t power);
+int				ft_next_prime(int x);
+int				ft_is_prime(const int x);
+size_t			ft_strlen_fp(char *str, int (*f)(int));
 
 #endif

@@ -1,28 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_split_whitespaces.c                             :+:      :+:    :+:   */
+/*   ft_strtok.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/02/12 18:51:44 by fmallist          #+#    #+#             */
-/*   Updated: 2020/02/12 19:21:37 by fmallist         ###   ########.fr       */
+/*   Created: 2020/02/17 17:08:16 by fmallist          #+#    #+#             */
+/*   Updated: 2020/02/17 17:28:22 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static size_t	wordlen(const char *s)
-{
-	size_t i;
-
-	i = 0;
-	while (!ft_isspace(s[i]) && s[i])
-		i++;
-	return (i);
-}
-
-static size_t	count_words(const char *s)
+static size_t		ft_count_words(char const *s, int (*f)(int))
 {
 	size_t words;
 
@@ -31,14 +21,24 @@ static size_t	count_words(const char *s)
 		return (0);
 	while (*s)
 	{
-		if (ft_isspace(*s) && (!ft_isspace(*(s + 1)) || *(s + 1) == 0))
+		if (!f(((int)*s)) && (f(((int)(*(s + 1)))) || *(s + 1) == 0))
 			words++;
 		s++;
 	}
 	return (words);
 }
 
-static void		delete(char ***res, size_t j)
+static size_t		ft_wordlen(char const *s, int (*f)(int))
+{
+	size_t		i;
+
+	i = 0;
+	while (!(f(s[i])) && s[i])
+		i++;
+	return (i);
+}
+
+static void			ft_delete(char ***res, size_t j)
 {
 	while (--j > 0)
 		ft_strdel(&(*res)[j]);
@@ -46,40 +46,42 @@ static void		delete(char ***res, size_t j)
 	*res = NULL;
 }
 
-static char		**alloc_and_fill(const char *s, char **res)
+static char			**ft_alloc_and_fill(char const *s,
+					int (*f)(int), char **res)
 {
-	size_t i;
-	size_t j;
+	size_t		i;
+	size_t		j;
 
 	i = 0;
 	j = 0;
 	while (s[i])
 	{
-		if (!ft_isspace(s[i]))
+		if (!f(s[i]))
 		{
-			if (!(res[j] = ft_strsub(s, i, wordlen(s + i))))
+			if (!(res[j] = ft_strsub(s, i, ft_wordlen(s + i, f))))
 			{
-				delete(&res, j);
+				ft_delete(&res, j);
 				return (NULL);
 			}
 			j++;
-			i += wordlen(s + i);
+			i += ft_wordlen(s + i, f);
 			continue ;
 		}
 		i++;
 	}
+	res[j] = NULL;
 	return (res);
 }
 
-char			**ft_split_whitespaces(const char *s)
+char				**ft_strtok(char const *s, int (*f)(int))
 {
 	char		**res;
 	size_t		words;
 
 	if (!s)
 		return (NULL);
-	words = count_words(s);
-	if (!(res = (char **)ft_memalloc(sizeof(char *) * (words + 1))))
+	words = ft_count_words(s, f);
+	if ((res = (char **)malloc(sizeof(char *) * (words + 1))) == NULL)
 		return (NULL);
-	return (alloc_and_fill(s, res));
+	return (ft_alloc_and_fill(s, f, res));
 }

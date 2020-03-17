@@ -6,7 +6,7 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/09/20 20:04:19 by fmallist          #+#    #+#             */
-/*   Updated: 2020/02/10 19:29:03 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/03/15 17:21:31 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,15 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <stdio.h>
 
 static size_t			ft_strlen_lb(const char *str)
 {
 	size_t i;
 
 	i = 0;
+	if (ft_strequ(str, "\n"))
+		return (1);
 	while (str[i])
 	{
 		if (str[i] == '\n')
@@ -66,7 +69,8 @@ int						get_next_line(const int fd, char **line)
 	while ((ret = read(fd, buff, BUFF_SIZE)) > 0)
 	{
 		buff[ret] = 0;
-		arr[fd] = ft_strjoin_free(arr[fd], buff);
+		if (!(arr[fd] = ft_strjoin_free(arr[fd], buff)))
+			return (-1);
 		if (ft_strchr(arr[fd], '\n'))
 			return (ft_return_line(line, &arr[fd], 0));
 		if (ret < BUFF_SIZE)

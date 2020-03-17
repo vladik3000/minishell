@@ -1,25 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin_free.c                                  :+:      :+:    :+:   */
+/*   ft_strlen_fp.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/09/23 19:49:09 by fmallist          #+#    #+#             */
-/*   Updated: 2020/01/15 17:34:45 by fmallist         ###   ########.fr       */
+/*   Created: 2020/03/10 19:54:56 by fmallist          #+#    #+#             */
+/*   Updated: 2020/03/10 21:04:08 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char		*ft_strjoin_free(char *s1, char *s2)
+size_t		ft_strlen_fp(char *str, int (*f)(int))
 {
-	char *s;
+	size_t len;
+	size_t i;
 
-	if (!s1 && s2)
-		return (ft_strdup(s2));
-	if (!(s = ft_strjoin(s1, s2)))
-		return (NULL);
-	ft_strdel(&s1);
-	return (s);
+	i = 0;
+	len = 0;
+	while (str[i] && f(str[i]))
+	{
+		len++;
+		i++;
+	}
+	return (len);
 }

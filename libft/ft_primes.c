@@ -1,29 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strsub.c                                        :+:      :+:    :+:   */
+/*   ft_primes.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/09/17 18:19:38 by fmallist          #+#    #+#             */
-/*   Updated: 2020/02/11 19:46:06 by fmallist         ###   ########.fr       */
+/*   Created: 2020/02/26 21:00:54 by fmallist          #+#    #+#             */
+/*   Updated: 2020/02/26 21:28:56 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char			*ft_strsub(char const *s, unsigned int start, size_t len)
+int		ft_is_prime(const int x)
 {
-	size_t			i;
-	char			*res;
+	int i;
 
-	i = 0;
-	if ((len + 1 < len) || !s)
-		return (NULL);
-	if ((res = (char *)malloc(sizeof(char) * (len + 1))) == NULL)
-		return (NULL);
-	while (i < len)
-		res[i++] = s[start++];
-	res[i] = '\0';
-	return (res);
+	if (x <= 1)
+		return (0);
+	if (x < 4)
+		return (1);
+	if ((x % 2) == 0 || (x % 3) == 0)
+		return (0);
+	i = 3;
+	while (i < x / 2)
+	{
+		if ((x % i) == 0)
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+int		ft_next_prime(int x)
+{
+	while (ft_is_prime(x) != 1)
+		x++;
+	return (x);
 }

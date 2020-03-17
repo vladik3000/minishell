@@ -6,7 +6,7 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/23 19:00:04 by fmallist          #+#    #+#             */
-/*   Updated: 2020/02/08 18:39:49 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/03/01 16:40:03 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 # define FT_PRINTF_H
 
-# include "libft/libft.h"
+# include "../libft.h"
 # include <stdarg.h>
 # include <stdint.h>
 
@@ -105,6 +105,7 @@ typedef struct	s_printf
 	int			fd;
 }				t_printf;
 
+int				ft_printf_fd(int fd, const char *format, ...);
 void			get_width(t_printf *data, const char **format);
 void			get_precision(t_printf *data, const char **format);
 void			get_flags(t_printf *data, const char **format);
