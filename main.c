@@ -15,6 +15,7 @@
 
 int is_prompt;
 
+
 void	handle_interrupt(int pid)
 {
 	ft_printf("\n$> ");
@@ -132,18 +133,14 @@ void	handle_input(char *input, char ***env, t_hash_table **ht)
 void	minishell(char ***ev, t_hash_table **ht)
 {
 	char	*line;
-	int		status;
 
-	status = 1;
-	while (status)
+	while (42)
 	{
 		if (is_prompt)
 			ft_printf("$> ");
 		is_prompt = 1;
 		if (get_next_line(STDIN_FILENO, &line) == -1)
-		{
 			malloc_error();
-		}
 		if (!line)
 			continue ;
 		handle_input(line, ev, ht);
@@ -160,9 +157,9 @@ int main(int ac, char **av, char **environ)
 
 	ht = NULL;
 	ht = ht_new_sized(10);
-	//signal(SIGINT, handle_interrupt);
+    //signal(SIGINT, handle_interrupt);
 	if (init_binaries(&ht, environ) == PATH_NOTFOUND)
-		ht = NULL;
+		ht_delete_hash_table(ht);
 	init_ev(&ev, environ);
 	minishell(&ev, &ht);
 	return (0);

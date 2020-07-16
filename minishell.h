@@ -52,6 +52,7 @@ typedef struct	s_hash_table
 
 
 //void	builtin_cd(char **args, char **env);
+int	execute(char *path, char **av, char **env);
 void	init_ev(char ***my_table, char **env);
 int		builtin_cd(char **args, char **env);
 int		builtin_setenv(char **args, char ***env, t_hash_table **ht);

@@ -12,12 +12,14 @@
 
 #include "minishell.h"
 
-static int	print_env_table(char **env)
+static int	print_env_table(const char **env)
 {
 	int i;
 
 	i = 0;
-	while (env[i])
+    if (!env)
+        return (-1);
+    while (env[i])
 	{
 		ft_printf("%s\n", env[i]);
 		i++;
@@ -32,7 +34,7 @@ void		copy_table(char ***new, char **old)
 	i = 0;
 	while (old[i])
 		i++;
-	if (!(new = ft_memalloc(sizeof(char *) * (i + 1))))
+	if (!(*new = ft_memalloc(sizeof(char *) * (i + 1))))
 		malloc_error();
 	i = 0;
 	while (old[i])
@@ -51,21 +53,22 @@ void		append_to_table(char ***env, char *var)
 
 	new_env = NULL;
 	i = 0;
-	while ((*env)[i])
+	while (*env && (*env)[i])
 		i++;
 	if (!(new_env = ft_memalloc(sizeof(char *) * (i + 2))))
 		malloc_error();
 	i = 0;
-	while ((*env)[i])
+	while (*env && (*env)[i])
 	{
-		if (!(new_env[i] = ft_strdup((*env)[i])))
-			malloc_error();
+	    if (!(new_env[i] = ft_strdup((*env)[i])))
+		    malloc_error();
 		i++;
-	}
+    }
 	new_env[i] = var;
 	new_env[i + 1] = NULL;
-	delete_table(env);
-	env = new_env;
+    if (env && *env)
+	    delete_table(env);
+	*env = new_env;
 }
 
 static char **build_envs(char **args, char **env, int is_ignore)
@@ -79,6 +82,8 @@ static char **build_envs(char **args, char **env, int is_ignore)
 	local_env = NULL;
 	if (!is_ignore)
 		copy_table(&local_env, env);
+    else
+        i = 2;
 	while (args[i])
 	{
 		if (!(equal_sign = ft_strchr(args[i], '=')))
@@ -100,22 +105,21 @@ int		find_exec(char **env)
 
 	equal = NULL;
 	i = 0;
-	while (env[i])
+    while (env[i])
 	{
 		if (!(equal = ft_strchr(env[i], '=')))
 			return (i);
 		if (ft_strlen(env[i]) < 3)
 			return (i);
-		if (!(*(equal + 1)))
 	}
+    return (1);
 }
 
 int		builtin_env(char **args, char **env, t_hash_table **ht)
 {
-	char **local_env;
+	char	**local_env;
 	int		is_ignore;
 	int		exec;
-
 
 	is_ignore = 0;
 	local_env = NULL;
@@ -123,8 +127,10 @@ int		builtin_env(char **args, char **env, t_hash_table **ht)
 		is_ignore = 1;
 	local_env = build_envs(args, env, is_ignore);
 	if (!(exec = find_exec(args)))
-		print_env_table(local_env);
-	else
-		execute(args[exec], args + exec, local_env);
+		print_env_table((const char **)local_env);
+    ft_printf("args[exec]:%s\n", args[exec]);
+	if (execute(args[exec], args + exec, local_env) == -1)
+        return (-1);
+    //delete_table(&local_env);
 	return (1);
 }
