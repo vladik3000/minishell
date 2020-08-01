@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 int		check_builtin(char **args, char ***env, t_hash_table **ht)
 {

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 char	*append_path(char *path, char *arg)
 {
@@ -29,6 +29,8 @@ void	delete_table(char ***table)
 	int i;
 
 	i = 0;
+	if (NULL == table || NULL == *table)
+		return;
 	while ((*table)[i])
 	{
 		free((*table)[i]);

@@ -54,27 +54,37 @@ static int				ft_return_line(char **line, char **arr, size_t end)
 	return (1);
 }
 
+static int				help(char **arr, char *buff, char **line, size_t ret)
+{
+	if (!(*arr = ft_strjoin_free(*arr, buff)))
+		return (-1);
+	if (ft_strchr(*arr, '\n'))
+		return (ft_return_line(line, arr, 0));
+	if (ret < BUFF_SIZE)
+		return (ft_return_line(line, arr, 1));
+	return (0);
+}
+
 int						get_next_line(const int fd, char **line)
 {
 	int			ret;
 	static char	*arr[10240];
 	char		buff[BUFF_SIZE + 1];
 
-	if (fd < 0 || !line || fd > 10239 || BUFF_SIZE < 1)
-		return (-1);
-	if ((!arr[fd] && !(arr[fd] = ft_strnew(BUFF_SIZE))))
+	if (fd == -312)
+	{
+		ft_strdel(&arr[0]);
+		return (1);
+	}
+	if ((fd < 0 || !line || fd > 10239)
+		|| (!arr[fd] && !(arr[fd] = ft_strnew(BUFF_SIZE))))
 		return (-1);
 	if (ft_strchr(arr[fd], '\n'))
 		return (ft_return_line(line, &arr[fd], 0));
 	while ((ret = read(fd, buff, BUFF_SIZE)) > 0)
 	{
 		buff[ret] = 0;
-		if (!(arr[fd] = ft_strjoin_free(arr[fd], buff)))
-			return (-1);
-		if (ft_strchr(arr[fd], '\n'))
-			return (ft_return_line(line, &arr[fd], 0));
-		if (ret < BUFF_SIZE)
-			return (ft_return_line(line, &arr[fd], 1));
+		return (help(&arr[fd], buff, line, ret));
 	}
 	if (ret == -1)
 		return (-1);

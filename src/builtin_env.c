@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 static int	print_env_table(const char **env)
 {
@@ -127,10 +127,15 @@ int		builtin_env(char **args, char **env, t_hash_table **ht)
 		is_ignore = 1;
 	local_env = build_envs(args, env, is_ignore);
 	if (!(exec = find_exec(args)))
+	{
 		print_env_table((const char **)local_env);
-    ft_printf("args[exec]:%s\n", args[exec]);
-	if (execute(args[exec], args + exec, local_env) == -1)
+		delete_table(&local_env);
+		return (1);
+	}
+	if (execute(ht_search(*ht, args[exec]), args + exec, local_env) == -1)
+	{
+		delete_table(&local_env);
         return (-1);
-    //delete_table(&local_env);
+	}
 	return (1);
 }

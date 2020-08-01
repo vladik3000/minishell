@@ -24,6 +24,7 @@
 # include <signal.h>
 # include <sys/stat.h>
 
+# define FREE_GNL -312
 # define PATH_NOTFOUND -4
 # define N 1
 # define E 2
@@ -68,8 +69,9 @@ int		find_env(char **ev, char *name);
 char	*append_path(char *path, char *arg);
 int		init_binaries(t_hash_table **ht, char **ev);
 void	malloc_error();
-void	delete_table(char ***table);
+void	gelete_table(char ***table);
 void	replace_envs(char ***args, char **env);
+void	delete_table(char ***table);
 t_hash_table		*ht_new_sized(const size_t size_index);
 void				ht_delete_hash_table(t_hash_table *ht);
 void				ht_delete_item(t_ht_item *item);

@@ -16,20 +16,23 @@ SRC=builtin_cd.c		builtin_echo.c	builtin_execution.c \
 	builtin_exit.c		env_funcs.c		errors.c			\
 	hash_table.c		init_bins.c		main.c				\
 	utils.c				builtin_env.c		builtin_setenv.c	builtin_unsetenv.c 
-CFLAGS=-Wall -Wextra -Werror
 
-OBJ=$(SRC:.c=.o)
+CFLAGS=-Wall -Wextra -Werror
+OBJDIR=obj/
+SRCDIR=src/
+OBJ=$(addprefix $(OBJDIR), $(SRC:.c=.o))
 
 all: $(NAME)
 
-$(OBJ): %.o: %.c
+$(OBJ): $(OBJDIR)%.o: $(SRCDIR)%.c
 	gcc -g -c $< -o $@
 
 $(LIB):
 	make -C libft/ft_printf
+	mkdir -p obj
 
 $(NAME) : $(LIB) $(OBJ) minishell.h
-	gcc -g $(OBJ) -L libft/ft_printf -lftprintf -o $(NAME)
+	gcc $(OBJ) -L libft/ft_printf -lftprintf -o $(NAME)
 
 clean:
 	@/bin/rm -f $(OBJ)

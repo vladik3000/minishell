@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 
 int is_prompt;
@@ -84,7 +84,10 @@ void	search(char **arg, char **env, t_hash_table *ht)
 			}
 	}
 	else
+	{
 		cmd = arg[0];
+	}
+
 	execute(cmd, arg, env);
 }
 
@@ -93,6 +96,19 @@ void	exec_command(char **args, char **env, t_hash_table *ht)
 	search(args, env, ht);
 	
 }
+
+int		is_ascii_word(const char *word)
+{
+	int i = 0;
+	while (word[i])
+	{
+		if ((int)word[i] >= 127 || (int)word[i] <= 0)
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 
 void	handle_input(char *input, char ***env, t_hash_table **ht)
 {
@@ -113,6 +129,16 @@ void	handle_input(char *input, char ***env, t_hash_table **ht)
 		if (input && *input)
 			if (!(args = ft_strtok(input, &ft_isspace)))
 				malloc_error();
+		if (is_ascii_word(args[0]) == 0)
+		{
+			ft_printf_fd(STDERR_FILENO, "minishell: %s: command not found\n", args[0]);
+			return;
+		}
+//		while (args[i] != 0)
+//		{
+//			ft_printf("%s\n", args[i]);
+//			i++;
+//		}
 		replace_envs(&args, *env);
 		if (args[0] != 0)
 		{
@@ -122,7 +148,9 @@ void	handle_input(char *input, char ***env, t_hash_table **ht)
 				return ;
 			}
 			else
+			{
 				exec_command(args, *env, *ht);
+			}
 			delete_table(&args);
 		}
 		if (args)
@@ -146,6 +174,7 @@ void	minishell(char ***ev, t_hash_table **ht)
 		handle_input(line, ev, ht);
 		ft_strdel(&line);
 	}
+	get_next_line(FREE_GNL, NULL);
 	delete_table(ev);
 }
 

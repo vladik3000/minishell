@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "../minishell.h"
 
 static void	insert(char *path_splitted, struct dirent *entry, t_hash_table **ht)
 {
