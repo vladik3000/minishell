@@ -14,6 +14,12 @@
 
 int		check_builtin(char **args, char ***env, t_hash_table **ht)
 {
+		//int i = 0;
+		//while (args[i] != 0)
+		//{
+	//		ft_printf("%s\n", args[i]);
+//			i++;
+//		}
 	if (ft_strequ(*args, "echo"))
 		return (builtin_echo(args, *env));
 	else if (ft_strequ(*args, "cd"))

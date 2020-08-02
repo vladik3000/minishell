@@ -134,16 +134,17 @@ void	handle_input(char *input, char ***env, t_hash_table **ht)
 			ft_printf_fd(STDERR_FILENO, "minishell: %s: command not found\n", args[0]);
 			return;
 		}
+//		i = 0;
 //		while (args[i] != 0)
 //		{
 //			ft_printf("%s\n", args[i]);
 //			i++;
 //		}
-		replace_envs(&args, *env);
+	//	replace_envs(&args, *env);
 		if (args[0] != 0)
 		{
 			if (check_builtin(args, env, ht))
-			{	
+			{
 				delete_table(&args);
 				return ;
 			}
@@ -162,6 +163,7 @@ void	minishell(char ***ev, t_hash_table **ht)
 {
 	char	*line;
 
+	line = NULL;
 	while (42)
 	{
 		if (is_prompt)

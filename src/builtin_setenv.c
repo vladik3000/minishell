@@ -32,7 +32,7 @@ static int is_bad_usage(char **args)
 	return (0);
 }
 
-static int replace_env(char ***env, char *value, int index)
+int replace_env(char ***env, char *value, int index)
 {
 	char *new_var;
 	int equal;

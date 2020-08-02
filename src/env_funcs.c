@@ -18,6 +18,8 @@ int		find_env(char **ev, char *name)
 	int j;
 	size_t namelen;
 
+	if (NULL == ev)
+		return (-1);
 	i = 0;
 	namelen = ft_strlen(name);
 	while (ev[i])

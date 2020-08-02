@@ -80,7 +80,7 @@ t_ht_item			*ht_new_item(const char *k, const char *v);
 int					ht_insert(t_hash_table *ht, const char *k, const char *v);
 char				*ht_search(t_hash_table *ht, const char *k);
 int					ht_resize(t_hash_table *ht, const int dir);
-
+int		replace_env(char ***env, char *value, int index);
 
 
 #endif
