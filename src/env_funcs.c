@@ -26,8 +26,12 @@ int		find_env(char **ev, char *name)
 	{
 		if (ft_strnstr(ev[i], name, namelen) != NULL)
 		{
+			ft_printf("name:[%s] namelen:[%d]\n", ev[i], namelen);
 			if (ev[i][namelen] == '=')
+			{
+				ft_printf("what the fuck");
 				return (i);
+			}
 		}
 		i++;
 	}

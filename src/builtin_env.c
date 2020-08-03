@@ -66,10 +66,9 @@ void		append_to_table(char ***env, char *var)
 		    malloc_error();
 		i++;
     }
-	index = find_env(*env, var);
+	index = find_env(*env, var); //TODO: fix find env
 	if (-1 != index)
 	{
-		ft_printf("FOUND!!!!");
 		replace_env(env, var, index);
 	}
 	else
@@ -104,7 +103,7 @@ static char **build_envs(char **args, char **env, int is_ignore)
 			break;
 		if (!(*(equal_sign + 1)) || !(*(equal_sign - 1)))
 			break;
-		append_to_table(&local_env, args[i]); // NEED TO CALL SETENV
+		append_to_table(&local_env, args[i]);
 		i++;
 	}
 	return (local_env);
