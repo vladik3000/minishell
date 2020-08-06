@@ -15,7 +15,7 @@ LIB=libft/libftprintf.a
 SRC=builtin_cd.c		builtin_echo.c	builtin_execution.c \
 	builtin_exit.c		env_funcs.c		errors.c			\
 	hash_table.c		init_bins.c		main.c				\
-	utils.c				builtin_env.c		builtin_setenv.c	builtin_unsetenv.c 
+	utils.c				builtin_env.c		builtin_setenv.c	builtin_unsetenv.c echo_funcs.c env_funcs_2.c setenv_funcs.c
 
 CFLAGS=-Wall -Wextra -Werror
 OBJDIR=obj/

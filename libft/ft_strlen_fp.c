@@ -14,15 +14,10 @@
 
 size_t		ft_strlen_fp(char *str, int (*f)(int))
 {
-	size_t len;
 	size_t i;
 
 	i = 0;
-	len = 0;
 	while (str[i] && f(str[i]))
-	{
-		len++;
 		i++;
-	}
-	return (len);
+	return (i);
 }

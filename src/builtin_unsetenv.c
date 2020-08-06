@@ -6,29 +6,30 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/02 19:47:55 by fmallist          #+#    #+#             */
-/*   Updated: 2020/03/07 17:22:37 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/06 20:12:32 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static int env_var_not_found(char *name)
+static int		env_var_not_found(char *name)
 {
-	ft_printf_fd(STDERR_FILENO, "unsetenv: %s: environmental variable not found, nothing to unset", name);
+	ft_printf_fd(STDERR_FILENO,
+	"unsetenv: %s: environmental variable not found, nothing to unset", name);
 	return (-1);
 }
 
-static int usage()
+static int		usage(void)
 {
 	ft_printf_fd(STDERR_FILENO, "unsetenv:\nusage: unsetenv [NAME]");
 	return (-1);
 }
 
-static int unset(char ***env, int index)
+static int		unset(char ***env, int index)
 {
 	int		i;
 	int		j;
-	char **new_env;
+	char	**new_env;
 
 	i = 0;
 	j = 0;
@@ -55,7 +56,7 @@ static int unset(char ***env, int index)
 	return (1);
 }
 
-int		builtin_unsetenv(char **args, char ***env, t_hash_table **ht)
+int				builtin_unsetenv(char **args, char ***env, t_hash_table **ht)
 {
 	int i;
 

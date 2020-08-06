@@ -6,13 +6,14 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 15:01:49 by fmallist          #+#    #+#             */
-/*   Updated: 2020/03/07 15:26:29 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/06 20:07:04 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static void	insert(char *path_splitted, struct dirent *entry, t_hash_table **ht)
+static void		insert(char *path_splitted, struct dirent *entry,
+				t_hash_table **ht)
 {
 	char *bin_path;
 
@@ -26,12 +27,12 @@ static void	insert(char *path_splitted, struct dirent *entry, t_hash_table **ht)
 	}
 }
 
-static int	search_and_insert(char **path_splitted, t_hash_table **ht)
+static int		search_and_insert(char **path_splitted, t_hash_table **ht)
 {
-	struct dirent *entry;
+	struct dirent	*entry;
 	DIR				*d;
-	int i;
-	
+	int				i;
+
 	i = 0;
 	while (path_splitted[i])
 	{
@@ -48,12 +49,12 @@ static int	search_and_insert(char **path_splitted, t_hash_table **ht)
 	return (0);
 }
 
-int		init_binaries(t_hash_table **ht, char **ev)
+int				init_binaries(t_hash_table **ht, char **ev)
 {
 	int		i;
-	int 	path_index;
+	int		path_index;
 	char	**path_splitted;
-	int		path_notfound;// need to figure out what to do if no PATH was found
+	int		path_notfound;
 
 	i = 0;
 	if ((path_index = find_env(ev, "PATH")) == -1)

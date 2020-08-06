@@ -6,49 +6,48 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/10 19:15:05 by fmallist          #+#    #+#             */
-/*   Updated: 2020/03/16 18:41:54 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/06 20:04:18 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+int			g_is_prompt;
 
-int is_prompt;
-
-
-void	handle_interrupt(int pid)
+void		handle_interrupt(int pid)
 {
 	ft_printf("\n$> ");
-	is_prompt = 0;
+	g_is_prompt = 0;
 }
 
-int	check_file_to_exec(char *path)
+int			check_file_to_exec(char *path)
 {
 	struct stat statbuf;
 
-	if (access(path, F_OK)== -1)
+	if (access(path, F_OK) == -1)
 	{
-		ft_printf_fd(STDERR_FILENO, "minishell: no such file or directory: %s\n", path);
-		is_prompt = 1;
+		ft_printf_fd(STDERR_FILENO,
+		"minishell: no such file or directory: %s\n", path);
+		g_is_prompt = 1;
 		return (-1);
 	}
 	else if (access(path, X_OK) == -1)
 	{
 		ft_printf_fd(STDERR_FILENO, "minishell: %s: Permission denied\n", path);
-		is_prompt = 1;
+		g_is_prompt = 1;
 		return (-1);
 	}
 	lstat(path, &statbuf);
 	if ((statbuf.st_mode & S_IFMT) == S_IFDIR)
 	{
 		ft_printf_fd(STDERR_FILENO, "minishell: %s: is a directory\n", path);
-		is_prompt = 1;
+		g_is_prompt = 1;
 		return (-1);
 	}
 	return (0);
 }
 
-int	execute(char *path, char **av, char **env)
+int			execute(char *path, char **av, char **env)
 {
 	pid_t	pid;
 	int		i;
@@ -59,47 +58,45 @@ int	execute(char *path, char **av, char **env)
 	if ((pid = fork()) == 0)
 	{
 		if (execve(path, av, env) == -1)
-			ft_printf_fd(STDERR_FILENO, "minishell: %s: exec format error\n", path);
+			ft_printf_fd(STDERR_FILENO,
+			"minishell: %s: exec format error\n", path);
 	}
 	else if (pid < 0)
-		ft_printf_fd(STDERR_FILENO, "minishell: fork: failed to fork a process");
+		ft_printf_fd(STDERR_FILENO,
+		"minishell: fork: failed to fork a process");
 	else
 	{
-		is_prompt = 1;
+		g_is_prompt = 1;
 		wait(0);
 	}
 	return (1);
 }
 
-void	search(char **arg, char **env, t_hash_table *ht)
+void		search(char **arg, char **env, t_hash_table *ht)
 {
 	char *cmd;
-	
+
 	if (!ft_strchr(arg[0], '/'))
 	{
 		if (!(cmd = ht_search(ht, arg[0])))
-			{
-				ft_printf_fd(STDERR_FILENO, "minishell: command not found: %s\n", arg[0]);
-				return ;
-			}
+		{
+			ft_printf_fd(STDERR_FILENO,
+			"minishell: command not found: %s\n", arg[0]);
+			return ;
+		}
 	}
 	else
 	{
 		cmd = arg[0];
 	}
-
 	execute(cmd, arg, env);
 }
 
-void	exec_command(char **args, char **env, t_hash_table *ht)
+int			is_ascii_word(const char *word)
 {
-	search(args, env, ht);
-	
-}
+	int i;
 
-int		is_ascii_word(const char *word)
-{
-	int i = 0;
+	i = 0;
 	while (word[i])
 	{
 		if ((int)word[i] >= 127 || (int)word[i] <= 0)
@@ -109,12 +106,11 @@ int		is_ascii_word(const char *word)
 	return (1);
 }
 
-
-void	handle_input(char *input, char ***env, t_hash_table **ht)
+void		handle_input(char *input, char ***env, t_hash_table **ht)
 {
-	int i;
-	int flag;
-	char **args;
+	int		i;
+	int		flag;
+	char	**args;
 
 	flag = 0;
 	i = 0;
@@ -131,16 +127,10 @@ void	handle_input(char *input, char ***env, t_hash_table **ht)
 				malloc_error();
 		if (is_ascii_word(args[0]) == 0)
 		{
-			ft_printf_fd(STDERR_FILENO, "minishell: %s: command not found\n", args[0]);
-			return;
+			ft_printf_fd(STDERR_FILENO,
+			"minishell: %s: command not found\n", args[0]);
+			return ;
 		}
-//		i = 0;
-//		while (args[i] != 0)
-//		{
-//			ft_printf("%s\n", args[i]);
-//			i++;
-//		}
-	//	replace_envs(&args, *env);
 		if (args[0] != 0)
 		{
 			if (check_builtin(args, env, ht))
@@ -150,7 +140,7 @@ void	handle_input(char *input, char ***env, t_hash_table **ht)
 			}
 			else
 			{
-				exec_command(args, *env, *ht);
+				search(args, *env, *ht);
 			}
 			delete_table(&args);
 		}
@@ -159,16 +149,16 @@ void	handle_input(char *input, char ***env, t_hash_table **ht)
 	}
 }
 
-void	minishell(char ***ev, t_hash_table **ht)
+void		minishell(char ***ev, t_hash_table **ht)
 {
 	char	*line;
 
 	line = NULL;
 	while (42)
 	{
-		if (is_prompt)
+		if (g_is_prompt)
 			ft_printf("$> ");
-		is_prompt = 1;
+		g_is_prompt = 1;
 		if (get_next_line(STDIN_FILENO, &line) == -1)
 			malloc_error();
 		if (!line)
@@ -180,15 +170,15 @@ void	minishell(char ***ev, t_hash_table **ht)
 	delete_table(ev);
 }
 
-int main(int ac, char **av, char **environ)
+int			main(int ac, char **av, char **environ)
 {
-	char **ev;
-	t_hash_table *ht;
-	is_prompt = 1;
+	char			**ev;
+	t_hash_table	*ht;
 
+	g_is_prompt = 1;
 	ht = NULL;
 	ht = ht_new_sized(10);
-    //signal(SIGINT, handle_interrupt);
+	signal(SIGINT, handle_interrupt);
 	if (init_binaries(&ht, environ) == PATH_NOTFOUND)
 		ht_delete_hash_table(ht);
 	init_ev(&ev, environ);

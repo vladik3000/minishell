@@ -32,46 +32,42 @@
 # define HT_PRIME_2 163
 # define HT_INIT_BASE_SIZE 100
 
-typedef struct	s_ht_item
+typedef struct		s_ht_item
 {
-	char *key;
-	char *value;
-}				t_ht_item;
-
-
+	char		*key;
+	char		*value;
+}					t_ht_item;
 
 extern t_ht_item	g_ht_deleted_item;
 
-typedef struct	s_hash_table
+typedef struct		s_hash_table
 {
 	size_t		size_index;
-	size_t 		size;
+	size_t		size;
 	size_t		count;
 	t_ht_item	**items;
-}				t_hash_table;
+}					t_hash_table;
 
-
-
-//void	builtin_cd(char **args, char **env);
-int	execute(char *path, char **av, char **env);
-void	init_ev(char ***my_table, char **env);
-int		builtin_cd(char **args, char **env);
-int		builtin_setenv(char **args, char ***env, t_hash_table **ht);
-int		builtin_unsetenv(char **args, char ***env, t_hash_table **ht);
-int		builtin_env(char **args, char **env, t_hash_table **ht);
-int		check_builtin(char **args, char ***env, t_hash_table **ht);
-int		builtin_echo(char **args, char **env);
-void	builtin_exit(char **args, char ***env, t_hash_table **ht);
-void	error_msg(char *error, char *msg);
-void	builtin_exit();
-void	error(char *msg);
-int		find_env(char **ev, char *name);
-char	*append_path(char *path, char *arg);
-int		init_binaries(t_hash_table **ht, char **ev);
-void	malloc_error();
-void	gelete_table(char ***table);
-void	replace_envs(char ***args, char **env);
-void	delete_table(char ***table);
+int					execute(char *path, char **av, char **env);
+void				init_ev(char ***my_table, char **env);
+int					builtin_cd(char **args, char **env);
+int					builtin_setenv(char **args, char ***env, t_hash_table **ht);
+int					builtin_unsetenv(char **args, char ***env,
+					t_hash_table **ht);
+int					builtin_env(char **args, char **env, t_hash_table **ht);
+int					check_builtin(char **args, char ***env, t_hash_table **ht);
+int					builtin_echo(char **args, char **env);
+void				builtin_exit(char **args, char ***env, t_hash_table **ht);
+void				error_msg(char *error, char *msg);
+void				builtin_exit();
+void				error(char *msg);
+int					find_env(char **ev, char *name);
+char				*append_path(char *path, char *arg);
+int					init_binaries(t_hash_table **ht, char **ev);
+void				malloc_error();
+void				gelete_table(char ***table);
+void				replace_envs(char ***args, char **env);
+void				delete_table(char ***table);
 t_hash_table		*ht_new_sized(const size_t size_index);
 void				ht_delete_hash_table(t_hash_table *ht);
 void				ht_delete_item(t_ht_item *item);
@@ -80,7 +76,21 @@ t_ht_item			*ht_new_item(const char *k, const char *v);
 int					ht_insert(t_hash_table *ht, const char *k, const char *v);
 char				*ht_search(t_hash_table *ht, const char *k);
 int					ht_resize(t_hash_table *ht, const int dir);
-int		replace_env(char ***env, char *value, int index);
-
-
+int					replace_env(char ***env, char *value, int index);
+char				*strip_env_var(char *var);
+int					is_not_equal(int c);
+void				remove_quotes(char *str);
+int					search_env_loop(char *arg, char **env, size_t len);
+int					print_nonprint(char arg);
+void				print_loop(char *arg, char **env);
+int					search_env(char *arg, char **env);
+int					print_env_table(const char **env);
+void				copy_table(char ***neww, char **old);
+int					is_not_equal(int c);
+char				*strip_env_var(char *var);
+void				append_to_table_help(char ***env, char *var,
+					char ***new_env, int i);
+int		is_bad_usage(char **args);
+int				replace_env(char ***env, char *value, int index);
+void	append_ev(char ***my_table, char **env, char *neww);
 #endif

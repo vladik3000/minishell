@@ -12,7 +12,7 @@
 
 #include "../minishell.h"
 
-static int if_bad_usage(char **args)
+static int			if_bad_usage(char **args)
 {
 	if (args[1] && args[2])
 	{
@@ -22,13 +22,14 @@ static int if_bad_usage(char **args)
 	return (0);
 }
 
-static int	check_file_to_cd(char *path)
+static int			check_file_to_cd(char *path)
 {
 	struct stat statbuf;
 
 	if (access(path, X_OK) == -1)
 	{
-		ft_printf_fd(STDERR_FILENO, "cd: %s: no such file or directory\n", path);
+		ft_printf_fd(STDERR_FILENO,
+		"cd: %s: no such file or directory\n", path);
 		return (-1);
 	}
 	lstat(path, &statbuf);
@@ -40,13 +41,11 @@ static int	check_file_to_cd(char *path)
 	return (0);
 }
 
-
-static int cd_prev(char **env)
+static int			cd_prev(char **env)
 {
-	int i;
-	char *prev;
+	int		i;
+	char	*prev;
 
-	prev = NULL;
 	if ((i = find_env(env, "OLDPWD")) == -1)
 	{
 		ft_printf_fd(STDERR_FILENO, "cd: -: no such file or directory");
@@ -71,12 +70,11 @@ static int cd_prev(char **env)
 	return (1);
 }
 
-static int cd_home(char **env)
+static int			cd_home(char **env)
 {
 	int		i;
 	char	*home;
 
-	home = NULL;
 	if ((i = find_env(env, "HOME")) == -1)
 	{
 		ft_printf_fd(STDERR_FILENO, "cd: ~: no such file or directory\n");
@@ -101,12 +99,11 @@ static int cd_home(char **env)
 	return (1);
 }
 
-int		builtin_cd(char **args, char **env)
+int					builtin_cd(char **args, char **env)
 {
-	int i;
-	char *path;
+	int		i;
+	char	*path;
 
-	int j = 0;
 	if (if_bad_usage(args))
 		return (1);
 	if (!args[1])

@@ -6,7 +6,7 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 15:18:21 by fmallist          #+#    #+#             */
-/*   Updated: 2020/03/15 16:16:40 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/06 20:11:14 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 int		find_env(char **ev, char *name)
 {
-	int i;
-	int j;
-	size_t namelen;
+	int		i;
+	int		j;
+	size_t	namelen;
 
 	if (NULL == ev)
 		return (-1);
@@ -26,12 +26,8 @@ int		find_env(char **ev, char *name)
 	{
 		if (ft_strnstr(ev[i], name, namelen) != NULL)
 		{
-			ft_printf("name:[%s] namelen:[%d]\n", ev[i], namelen);
 			if (ev[i][namelen] == '=')
-			{
-				ft_printf("what the fuck");
 				return (i);
-			}
 		}
 		i++;
 	}
@@ -47,15 +43,15 @@ int		is_env(int c)
 {
 	return (ft_isalnum(c) || c == '_');
 }
-//TODO norme this 
+
 void	parse_envvar(char ***args, char **env, int index, char *dollar)
 {
-	size_t len_until_dollar;
-	size_t len_after_env;
-	size_t len_env;
-	int		i;
-	char *new_arg;
-	char *envname;
+	size_t		len_until_dollar;
+	size_t		len_after_env;
+	size_t		len_env;
+	int			i;
+	char		*new_arg;
+	char		*envname;
 
 	i = 0;
 	new_arg = NULL;
@@ -93,12 +89,11 @@ void	parse_envvar(char ***args, char **env, int index, char *dollar)
 
 void	replace_envs(char ***args, char **env)
 {
-	int index;
-	int i;
+	int		index;
+	int		i;
+	char	*dollar;
 
 	i = 0;
-	char *dollar;
-
 	dollar = NULL;
 	while ((*args)[i])
 	{
@@ -124,23 +119,23 @@ void	replace_envs(char ***args, char **env)
 
 void	init_ev(char ***my_table, char **env)
 {
-	int i;
-	int j;
-	char **split;
-	char *tmp;
-	
+	int		i;
+	int		j;
+	char	**split;
+	char	*tmp;
+
 	i = 0;
 	j = 0;
 	while (env[j])
 		j++;
 	if (!(*my_table = (char **)ft_memalloc(sizeof(char *) * (j + 1))))
 		malloc_error();
- 	while (*env)
- 	{
- 		if (!((*my_table)[i] = ft_strdup(*env)))
-		 	malloc_error();
- 		i++;
- 		env++;
- 	}
-	 (*my_table)[i] = NULL;
+	while (*env)
+	{
+		if (!((*my_table)[i] = ft_strdup(*env)))
+			malloc_error();
+		i++;
+		env++;
+	}
+	(*my_table)[i] = NULL;
 }

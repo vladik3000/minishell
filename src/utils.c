@@ -6,7 +6,7 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 16:33:32 by fmallist          #+#    #+#             */
-/*   Updated: 2020/03/01 18:08:34 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/06 19:50:41 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ char	*append_path(char *path, char *arg)
 	if (!(prefix = ft_strjoin_free(prefix, arg)))
 		malloc_error();
 	return (prefix);
-	
 }
 
 void	delete_table(char ***table)
@@ -30,7 +29,7 @@ void	delete_table(char ***table)
 
 	i = 0;
 	if (NULL == table || NULL == *table)
-		return;
+		return ;
 	while ((*table)[i])
 	{
 		free((*table)[i]);
