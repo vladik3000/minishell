@@ -6,81 +6,66 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 15:18:21 by fmallist          #+#    #+#             */
-/*   Updated: 2020/08/06 20:11:14 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/08 17:14:42 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int		find_env(char **ev, char *name)
+void	parse_envvar_help_1(size_t *len_until_dollar,
+		char **new_arg, char ***args, int index)
 {
-	int		i;
-	int		j;
-	size_t	namelen;
-
-	if (NULL == ev)
-		return (-1);
-	i = 0;
-	namelen = ft_strlen(name);
-	while (ev[i])
-	{
-		if (ft_strnstr(ev[i], name, namelen) != NULL)
-		{
-			if (ev[i][namelen] == '=')
-				return (i);
-		}
-		i++;
-	}
-	return (-1);
+	*new_arg = NULL;
+	*len_until_dollar = ft_strlen_fp((*args)[index], &is_not_dollar);
+	if (len_until_dollar)
+		if (!(*new_arg = ft_strsub((*args)[index], 0, *len_until_dollar)))
+			malloc_error();
 }
 
-int		is_not_dollar(int c)
+void	parse_envvar_help_2(t_envlen l, char **args,
+		char **new_arg, char **envname)
 {
-	return (c != '$');
+	ft_strdel(envname);
+	if (!(*new_arg = ft_strjoin_free(*new_arg, ((l.len_env > 0)
+	? (*args + l.len_until_dollar + l.len_env + 1) : NULL))))
+		malloc_error();
+	free(*args);
+	*args = *new_arg;
+	return ;
 }
 
-int		is_env(int c)
+void	parse_envvar_help_3(char **envname,
+		char **env, t_envlen l, char **new_arg)
 {
-	return (ft_isalnum(c) || c == '_');
+	ft_strdel(envname);
+	*envname = ft_strdup(env[find_env(env, *envname)] + l.len_env + 1);
+	*new_arg = ft_strjoin_free(*new_arg, *envname);
+	if (!(*envname) || !(*new_arg))
+		malloc_error();
 }
 
 void	parse_envvar(char ***args, char **env, int index, char *dollar)
 {
-	size_t		len_until_dollar;
-	size_t		len_after_env;
-	size_t		len_env;
+	t_envlen	l;
 	int			i;
 	char		*new_arg;
 	char		*envname;
 
 	i = 0;
-	new_arg = NULL;
-	len_until_dollar = ft_strlen_fp((*args)[index], &is_not_dollar);
-	if (len_until_dollar)
-		if (!(new_arg = ft_strsub((*args)[index], 0, len_until_dollar)))
-			malloc_error();
-	len_env = ft_strlen_fp(dollar + 1, &is_env);
-	envname = ft_strsub((*args)[index], len_until_dollar + 1, len_env);
-	len_after_env = ft_strlen(dollar + 1 + len_env);
-	if (!envname)
+	parse_envvar_help_1(&l.len_until_dollar, &new_arg, args, index);
+	l.len_env = ft_strlen_fp(dollar + 1, &is_env);
+	if (!(envname = ft_strsub((*args)[index],
+		l.len_until_dollar + 1, l.len_env)))
 		malloc_error();
+	l.len_after_env = ft_strlen(dollar + 1 + l.len_env);
 	if ((i = find_env(env, envname)) == -1)
 	{
-		ft_strdel(&envname);
-		if (!(new_arg = ft_strjoin_free(new_arg, ((len_env > 0)
-		? ((*args)[index] + len_until_dollar + len_env + 1) : NULL))))
-			malloc_error();
-		free((*args)[index]);
-		(*args)[index] = new_arg;
+		parse_envvar_help_2(l, &((*args)[index]), &new_arg, &envname);
 		return ;
 	}
-	ft_strdel(&envname);
-	envname = ft_strdup(env[i] + len_env + 1);
-	new_arg = ft_strjoin_free(new_arg, envname);
-	if (!envname || !new_arg)
-		malloc_error();
-	if (!(new_arg = ft_strjoin_free(new_arg, ((len_after_env > 0)
-	? ((*args)[index] + len_until_dollar + len_env + 1) : NULL))))
+	parse_envvar_help_3(&envname, env, l, &new_arg);
+	if (!(new_arg = ft_strjoin_free(new_arg, ((l.len_after_env > 0)
+	? ((*args)[index] + l.len_until_dollar + l.len_env + 1) : NULL))))
 		malloc_error();
 	free((*args)[index]);
 	ft_strdel(&envname);
@@ -95,6 +80,7 @@ void	replace_envs(char ***args, char **env)
 
 	i = 0;
 	dollar = NULL;
+	index = 0;
 	while ((*args)[i])
 	{
 		if (ft_strequ((*args)[i], "~"))
@@ -109,33 +95,8 @@ void	replace_envs(char ***args, char **env)
 			}
 		}
 		if ((dollar = ft_strchr((*args)[i], '$')))
-		{
 			if (*(dollar + 1) && ft_isalnum(*(dollar + 1)))
 				parse_envvar(args, env, i, dollar);
-		}
 		i++;
 	}
-}
-
-void	init_ev(char ***my_table, char **env)
-{
-	int		i;
-	int		j;
-	char	**split;
-	char	*tmp;
-
-	i = 0;
-	j = 0;
-	while (env[j])
-		j++;
-	if (!(*my_table = (char **)ft_memalloc(sizeof(char *) * (j + 1))))
-		malloc_error();
-	while (*env)
-	{
-		if (!((*my_table)[i] = ft_strdup(*env)))
-			malloc_error();
-		i++;
-		env++;
-	}
-	(*my_table)[i] = NULL;
 }

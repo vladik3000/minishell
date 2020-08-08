@@ -6,71 +6,11 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/10 19:15:05 by fmallist          #+#    #+#             */
-/*   Updated: 2020/08/06 20:04:18 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/08 17:48:45 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-int			g_is_prompt;
-
-void		handle_interrupt(int pid)
-{
-	ft_printf("\n$> ");
-	g_is_prompt = 0;
-}
-
-int			check_file_to_exec(char *path)
-{
-	struct stat statbuf;
-
-	if (access(path, F_OK) == -1)
-	{
-		ft_printf_fd(STDERR_FILENO,
-		"minishell: no such file or directory: %s\n", path);
-		g_is_prompt = 1;
-		return (-1);
-	}
-	else if (access(path, X_OK) == -1)
-	{
-		ft_printf_fd(STDERR_FILENO, "minishell: %s: Permission denied\n", path);
-		g_is_prompt = 1;
-		return (-1);
-	}
-	lstat(path, &statbuf);
-	if ((statbuf.st_mode & S_IFMT) == S_IFDIR)
-	{
-		ft_printf_fd(STDERR_FILENO, "minishell: %s: is a directory\n", path);
-		g_is_prompt = 1;
-		return (-1);
-	}
-	return (0);
-}
-
-int			execute(char *path, char **av, char **env)
-{
-	pid_t	pid;
-	int		i;
-
-	i = 0;
-	if (check_file_to_exec(path) == -1)
-		return (-1);
-	if ((pid = fork()) == 0)
-	{
-		if (execve(path, av, env) == -1)
-			ft_printf_fd(STDERR_FILENO,
-			"minishell: %s: exec format error\n", path);
-	}
-	else if (pid < 0)
-		ft_printf_fd(STDERR_FILENO,
-		"minishell: fork: failed to fork a process");
-	else
-	{
-		g_is_prompt = 1;
-		wait(0);
-	}
-	return (1);
-}
 
 void		search(char **arg, char **env, t_hash_table *ht)
 {
@@ -92,18 +32,21 @@ void		search(char **arg, char **env, t_hash_table *ht)
 	execute(cmd, arg, env);
 }
 
-int			is_ascii_word(const char *word)
+void		check(char **args, char ***env, t_hash_table **ht)
 {
-	int i;
-
-	i = 0;
-	while (word[i])
+	if (args[0] != 0)
 	{
-		if ((int)word[i] >= 127 || (int)word[i] <= 0)
-			return (0);
-		i++;
+		if (check_builtin(args, env, ht))
+		{
+			delete_table(&args);
+			return ;
+		}
+		else
+			search(args, *env, *ht);
+		delete_table(&args);
 	}
-	return (1);
+	if (args)
+		delete_table(&args);
 }
 
 void		handle_input(char *input, char ***env, t_hash_table **ht)
@@ -113,12 +56,12 @@ void		handle_input(char *input, char ***env, t_hash_table **ht)
 	char	**args;
 
 	flag = 0;
-	i = 0;
-	while (input[i])
+	i = -1;
+	args = NULL;
+	while (input[++i])
 	{
 		if (!ft_isspace(input[i]))
 			flag = 1;
-		i++;
 	}
 	if (flag)
 	{
@@ -131,21 +74,7 @@ void		handle_input(char *input, char ***env, t_hash_table **ht)
 			"minishell: %s: command not found\n", args[0]);
 			return ;
 		}
-		if (args[0] != 0)
-		{
-			if (check_builtin(args, env, ht))
-			{
-				delete_table(&args);
-				return ;
-			}
-			else
-			{
-				search(args, *env, *ht);
-			}
-			delete_table(&args);
-		}
-		if (args)
-			delete_table(&args);
+		check(args, env, ht);
 	}
 }
 
@@ -157,7 +86,7 @@ void		minishell(char ***ev, t_hash_table **ht)
 	while (42)
 	{
 		if (g_is_prompt)
-			ft_printf("$> ");
+			ft_printf("320POASCII>");
 		g_is_prompt = 1;
 		if (get_next_line(STDIN_FILENO, &line) == -1)
 			malloc_error();
@@ -184,4 +113,6 @@ int			main(int ac, char **av, char **environ)
 	init_ev(&ev, environ);
 	minishell(&ev, &ht);
 	return (0);
+	(void)ac;
+	(void)av;
 }

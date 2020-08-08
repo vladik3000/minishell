@@ -6,7 +6,7 @@
 #    By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/09/26 16:06:00 by fmallist          #+#    #+#              #
-#    Updated: 2020/03/01 16:42:52 by fmallist         ###   ########.fr        #
+#    Updated: 2020/08/08 18:44:16 by fmallist         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,13 +22,15 @@ LIBDIR = ../
 LIBNAME = ../libft.a
 CFLAGS = -Wall -Wextra -Werror
 
-all: $(NAME)
+all: $(LIB) $(NAME)
+
+$(LIB):
+	@make -C ../
 
 $(OBJ): %.o: %.c ft_printf.h
 	@gcc -c $(CFLAGS) $< -o $@
 
 $(NAME): $(OBJ)
-	@make -C $(LIBDIR)
 	@cp ../libft.a ./$(NAME)
 	@ar rc $(NAME) $(OBJ)
 clean:

@@ -6,7 +6,7 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/02 19:47:55 by fmallist          #+#    #+#             */
-/*   Updated: 2020/08/06 20:12:32 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/07 18:20:49 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static int		usage(void)
 	return (-1);
 }
 
-static int		unset(char ***env, int index)
+static void		unset(char ***env, int index)
 {
 	int		i;
 	int		j;
@@ -40,20 +40,17 @@ static int		unset(char ***env, int index)
 	i = 0;
 	while ((*env)[i])
 	{
-		if (i == index)
+		if (i != index)
 		{
-			i++;
-			continue ;
+			if (!(new_env[j] = ft_strdup((*env)[i])))
+				malloc_error();
+			j++;
 		}
-		if (!(new_env[j] = ft_strdup((*env)[i])))
-			malloc_error();
 		i++;
-		j++;
 	}
 	new_env[j] = NULL;
 	delete_table(env);
 	*env = new_env;
-	return (1);
 }
 
 int				builtin_unsetenv(char **args, char ***env, t_hash_table **ht)

@@ -6,7 +6,7 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/20 20:42:39 by fmallist          #+#    #+#             */
-/*   Updated: 2020/03/15 17:43:06 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/08 17:28:41 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,9 +101,6 @@ static int			cd_home(char **env)
 
 int					builtin_cd(char **args, char **env)
 {
-	int		i;
-	char	*path;
-
 	if (if_bad_usage(args))
 		return (1);
 	if (!args[1])

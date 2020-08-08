@@ -6,7 +6,7 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 15:01:49 by fmallist          #+#    #+#             */
-/*   Updated: 2020/08/06 20:07:04 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/08 17:32:17 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ int				init_binaries(t_hash_table **ht, char **ev)
 	int		i;
 	int		path_index;
 	char	**path_splitted;
-	int		path_notfound;
 
 	i = 0;
 	if ((path_index = find_env(ev, "PATH")) == -1)

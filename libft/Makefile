@@ -6,7 +6,7 @@
 #    By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/09/04 20:24:18 by fmallist          #+#    #+#              #
-#    Updated: 2020/03/10 19:58:28 by fmallist         ###   ########.fr        #
+#    Updated: 2020/08/08 18:41:26 by fmallist         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,7 @@ CFLAGS = -Wall -Wextra -Werror
 
 OBJECTS = $(SRC:.c=.o)
 
-all:$(NAME)
+all: $(NAME) libft.h
 
 $(NAME): $(OBJECTS)
 	@ar rc $(NAME) $(OBJECTS)

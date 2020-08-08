@@ -6,7 +6,7 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/18 17:16:57 by fmallist          #+#    #+#             */
-/*   Updated: 2020/03/15 16:19:48 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/08 17:34:15 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,14 @@ typedef struct		s_hash_table
 	t_ht_item	**items;
 }					t_hash_table;
 
+typedef struct		s_envlen
+{
+	size_t		len_until_dollar;
+	size_t		len_after_env;
+	size_t		len_env;
+}					t_envlen;
+
+int					g_is_prompt;
 int					execute(char *path, char **av, char **env);
 void				init_ev(char ***my_table, char **env);
 int					builtin_cd(char **args, char **env);
@@ -86,11 +94,21 @@ void				print_loop(char *arg, char **env);
 int					search_env(char *arg, char **env);
 int					print_env_table(const char **env);
 void				copy_table(char ***neww, char **old);
-int					is_not_equal(int c);
 char				*strip_env_var(char *var);
 void				append_to_table_help(char ***env, char *var,
 					char ***new_env, int i);
-int		is_bad_usage(char **args);
-int				replace_env(char ***env, char *value, int index);
-void	append_ev(char ***my_table, char **env, char *neww);
+int					is_bad_usage(char **args);
+int					replace_env(char ***env, char *value, int index);
+void				append_ev(char ***my_table, char **env, char *neww);
+void				handle_interrupt();
+int					check_file_to_exec(char *path);
+int					is_ascii_word(const char *word);
+int					is_env(int c);
+int					is_not_dollar(int c);
+int					ht_get_hash(const char *s,
+					const int num_buckets, const int attempt);
+int					ht_insert_insertion(t_hash_table *ht,
+					const char *k, t_ht_item *item);
+void				ht_resize_helper(t_hash_table *ht, t_hash_table *new_ht,
+					int tmp_size);
 #endif

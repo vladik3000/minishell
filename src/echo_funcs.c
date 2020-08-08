@@ -6,7 +6,7 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/06 19:41:02 by fmallist          #+#    #+#             */
-/*   Updated: 2020/08/06 19:41:09 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/08 17:36:05 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int			search_env_loop(char *arg, char **env, size_t len)
 	while (env[i])
 	{
 		tmp = ft_strchr(env[i], '=');
-		if ((tmp - env[i]) != len)
+		if ((tmp - env[i]) != (long)len)
 		{
 			i++;
 			continue ;
