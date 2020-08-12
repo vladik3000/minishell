@@ -6,7 +6,7 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/10 19:15:05 by fmallist          #+#    #+#             */
-/*   Updated: 2020/08/08 17:48:45 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/10 08:35:15 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,21 +32,22 @@ void		search(char **arg, char **env, t_hash_table *ht)
 	execute(cmd, arg, env);
 }
 
-void		check(char **args, char ***env, t_hash_table **ht)
+void		check(char ***args, char ***env, t_hash_table **ht)
 {
-	if (args[0] != 0)
+	replace_envs(args, *env);
+	if ((*args)[0] != 0)
 	{
-		if (check_builtin(args, env, ht))
+		if (check_builtin(*args, env, ht))
 		{
-			delete_table(&args);
+			delete_table(args);
 			return ;
 		}
 		else
-			search(args, *env, *ht);
-		delete_table(&args);
+			search(*args, *env, *ht);
+		delete_table(args);
 	}
-	if (args)
-		delete_table(&args);
+	if (args && *args)
+		delete_table(args);
 }
 
 void		handle_input(char *input, char ***env, t_hash_table **ht)
@@ -74,19 +75,22 @@ void		handle_input(char *input, char ***env, t_hash_table **ht)
 			"minishell: %s: command not found\n", args[0]);
 			return ;
 		}
-		check(args, env, ht);
+		check(&args, env, ht);
 	}
 }
 
 void		minishell(char ***ev, t_hash_table **ht)
 {
 	char	*line;
+	char	*emoji;
 
+	if (!(emoji = ft_strdup("\xF0\x9F\x92\x9E\0")))
+		malloc_error();
 	line = NULL;
 	while (42)
 	{
 		if (g_is_prompt)
-			ft_printf("320POASCII>");
+			ft_printf("%s ", emoji);
 		g_is_prompt = 1;
 		if (get_next_line(STDIN_FILENO, &line) == -1)
 			malloc_error();
@@ -95,6 +99,7 @@ void		minishell(char ***ev, t_hash_table **ht)
 		handle_input(line, ev, ht);
 		ft_strdel(&line);
 	}
+	ft_strdel(&emoji);
 	get_next_line(FREE_GNL, NULL);
 	delete_table(ev);
 }

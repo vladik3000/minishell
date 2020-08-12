@@ -6,7 +6,7 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 15:18:21 by fmallist          #+#    #+#             */
-/*   Updated: 2020/08/08 17:14:42 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/11 18:15:27 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	parse_envvar_help_1(size_t *len_until_dollar,
 {
 	*new_arg = NULL;
 	*len_until_dollar = ft_strlen_fp((*args)[index], &is_not_dollar);
-	if (len_until_dollar)
+	if (*len_until_dollar)
 		if (!(*new_arg = ft_strsub((*args)[index], 0, *len_until_dollar)))
 			malloc_error();
 }
@@ -31,14 +31,16 @@ void	parse_envvar_help_2(t_envlen l, char **args,
 		malloc_error();
 	free(*args);
 	*args = *new_arg;
-	return ;
 }
 
 void	parse_envvar_help_3(char **envname,
 		char **env, t_envlen l, char **new_arg)
 {
+	int i;
+
+	i = find_env(env, *envname);
 	ft_strdel(envname);
-	*envname = ft_strdup(env[find_env(env, *envname)] + l.len_env + 1);
+	*envname = ft_strdup(env[i] + l.len_env + 1);
 	*new_arg = ft_strjoin_free(*new_arg, *envname);
 	if (!(*envname) || !(*new_arg))
 		malloc_error();
@@ -74,22 +76,18 @@ void	parse_envvar(char ***args, char **env, int index, char *dollar)
 
 void	replace_envs(char ***args, char **env)
 {
-	int		index;
 	int		i;
 	char	*dollar;
+	char	*tilda;
 
 	i = 0;
 	dollar = NULL;
-	index = 0;
 	while ((*args)[i])
 	{
-		if (ft_strequ((*args)[i], "~"))
+		if ((tilda = ft_strchr((*args)[i], '~')))
 		{
-			if ((index = find_env(env, "HOME")) != -1)
+			if (replace_home(&((*args)[i]), env, tilda) == 1)
 			{
-				free((*args)[i]);
-				if (!((*args)[i] = ft_strdup(env[index] + 5)))
-					malloc_error();
 				i++;
 				continue ;
 			}

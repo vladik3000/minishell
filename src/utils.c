@@ -6,7 +6,7 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/28 16:33:32 by fmallist          #+#    #+#             */
-/*   Updated: 2020/08/08 17:51:45 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/10 08:35:28 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,9 @@
 
 void		handle_interrupt(void)
 {
-	ft_printf("\n$> ");
+	static char emoji[5] = "\xF0\x9F\x92\x9E\0";
+
+	ft_printf("\n%s ", emoji);
 	g_is_prompt = 0;
 }
 

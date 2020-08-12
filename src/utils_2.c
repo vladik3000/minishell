@@ -6,7 +6,7 @@
 /*   By: fmallist <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/08 17:07:27 by fmallist          #+#    #+#             */
-/*   Updated: 2020/08/08 17:35:05 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/09 18:49:21 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ int			find_env(char **ev, char *name)
 	if (NULL == ev)
 		return (-1);
 	i = 0;
+	if (name == NULL)
+		ft_printf("WHAT\n\n\n\n\n");
 	namelen = ft_strlen(name);
 	while (ev[i])
 	{

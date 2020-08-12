@@ -6,7 +6,7 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/18 17:16:57 by fmallist          #+#    #+#             */
-/*   Updated: 2020/08/08 17:34:15 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/11 20:08:04 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ typedef struct		s_envlen
 int					g_is_prompt;
 int					execute(char *path, char **av, char **env);
 void				init_ev(char ***my_table, char **env);
-int					builtin_cd(char **args, char **env);
+int					builtin_cd(char **args, char ***env);
 int					builtin_setenv(char **args, char ***env, t_hash_table **ht);
 int					builtin_unsetenv(char **args, char ***env,
 					t_hash_table **ht);
@@ -111,4 +111,8 @@ int					ht_insert_insertion(t_hash_table *ht,
 					const char *k, t_ht_item *item);
 void				ht_resize_helper(t_hash_table *ht, t_hash_table *new_ht,
 					int tmp_size);
+void				set_oldpwd(char ***env, char *oldpwd);
+int					replace_home(char **arg, char **env, char *tilda);
+int					check_tilda(char *tilda, char *arg);
+void				recreate_ht(char **env, t_hash_table **ht);
 #endif

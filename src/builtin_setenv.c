@@ -6,7 +6,7 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/02 17:27:19 by fmallist          #+#    #+#             */
-/*   Updated: 2020/03/16 19:27:02 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/11 20:08:08 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,7 @@ static char		*create_new_var(char *name, char *value)
 void			override_env(char ***env, char *value, t_hash_table **ht, int i)
 {
 	replace_env(env, value, i);
-	if (ft_strnequ((*env)[i], "PATH", 4))
-	{
-		if (*ht != NULL)
-			ht_delete_hash_table(*ht);
-		*ht = NULL;
-		*ht = ht_new_sized(10);
-		init_binaries(ht, *env);
-	}
+	recreate_ht(*env, ht);
 }
 
 static void		help(char *name, char *value, char ***env, char ***new_env)
@@ -76,11 +69,7 @@ int				builtin_setenv(char **args, char ***env, t_hash_table **ht)
 	else
 	{
 		help(name, value, env, &new_env);
-		if (ft_strequ(args[1], "PATH"))
-		{
-			*ht = ht_new_sized(10);
-			init_binaries(ht, *env);
-		}
+		recreate_ht(*env, ht);
 	}
 	delete_twostr(&name, &value);
 	return (1);

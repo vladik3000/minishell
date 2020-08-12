@@ -6,7 +6,7 @@
 #    By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/03/02 16:05:25 by fmallist          #+#    #+#              #
-#    Updated: 2020/08/08 18:46:03 by fmallist         ###   ########.fr        #
+#    Updated: 2020/08/11 18:19:07 by fmallist         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ SRC=builtin_cd.c		builtin_echo.c		builtin_execution.c \
 	utils.c				utils_2.c			hash_table_2.c		\
 	builtin_env.c		builtin_setenv.c	builtin_unsetenv.c	\
 	echo_funcs.c		env_funcs_2.c		setenv_funcs.c		\
-	hash_table_3.c		
+	hash_table_3.c		utils_3.c
 
 CFLAGS=-Wall -Wextra -Werror
 OBJDIR=obj/

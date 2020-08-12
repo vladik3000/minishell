@@ -6,7 +6,7 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/03/02 19:47:55 by fmallist          #+#    #+#             */
-/*   Updated: 2020/08/07 18:20:49 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/11 18:55:07 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 static int		env_var_not_found(char *name)
 {
 	ft_printf_fd(STDERR_FILENO,
-	"unsetenv: %s: environmental variable not found, nothing to unset", name);
+	"unsetenv: %s: environmental variable not found, nothing to unset\n", name);
 	return (-1);
 }
 
 static int		usage(void)
 {
-	ft_printf_fd(STDERR_FILENO, "unsetenv:\nusage: unsetenv [NAME]");
+	ft_printf_fd(STDERR_FILENO, "unsetenv:\nusage: unsetenv [NAME]\n");
 	return (-1);
 }
 

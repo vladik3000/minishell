@@ -6,7 +6,7 @@
 /*   By: fmallist <fmallist@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/20 20:42:39 by fmallist          #+#    #+#             */
-/*   Updated: 2020/08/08 17:28:41 by fmallist         ###   ########.fr       */
+/*   Updated: 2020/08/10 09:12:40 by fmallist         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,46 +41,45 @@ static int			check_file_to_cd(char *path)
 	return (0);
 }
 
-static int			cd_prev(char **env)
+static int			cd_prev(char ***env, char *cwd)
 {
-	int		i;
 	char	*prev;
 
-	if ((i = find_env(env, "OLDPWD")) == -1)
+	if (find_env(*env, "OLDPWD") == -1)
 	{
-		ft_printf_fd(STDERR_FILENO, "cd: -: no such file or directory");
+		ft_printf_fd(STDERR_FILENO, "cd: OLDPWD variable not found");
 		return (-1);
 	}
-	prev = env[i] + 7;
+	prev = (*env)[find_env(*env, "OLDPWD")] + 7;
 	if (check_file_to_cd(prev) == -1)
 		return (-1);
 	if (prev)
 	{
 		if (chdir(prev) == -1)
 		{
-			ft_printf_fd(STDERR_FILENO, "cd: %s: failed to open", prev);
+			ft_printf_fd(STDERR_FILENO, "cd: %s: failed to open\n", prev);
 			return (-1);
 		}
 	}
 	else
 	{
-		ft_printf_fd(STDERR_FILENO, "cd: -: no such file or directory");
+		ft_printf_fd(STDERR_FILENO, "cd: -: no such file or directory\n");
 		return (-1);
 	}
+	set_oldpwd(env, cwd);
 	return (1);
 }
 
-static int			cd_home(char **env)
+static int			cd_home(char ***env, char *cwd)
 {
-	int		i;
 	char	*home;
 
-	if ((i = find_env(env, "HOME")) == -1)
+	if (find_env(*env, "HOME") == -1)
 	{
 		ft_printf_fd(STDERR_FILENO, "cd: ~: no such file or directory\n");
 		return (-1);
 	}
-	home = env[i] + 5;
+	home = (*env)[find_env(*env, "HOME")] + 5;
 	if (check_file_to_cd(home) == -1)
 		return (-1);
 	if (home)
@@ -96,24 +95,29 @@ static int			cd_home(char **env)
 		ft_printf_fd(STDERR_FILENO, "cd: ~: no such file or directory\n");
 		return (-1);
 	}
+	set_oldpwd(env, cwd);
 	return (1);
 }
 
-int					builtin_cd(char **args, char **env)
+int					builtin_cd(char **args, char ***env)
 {
+	char cwd[PATH_MAX];
+
+	getcwd(cwd, sizeof(cwd));
 	if (if_bad_usage(args))
 		return (1);
 	if (!args[1])
-		return (cd_home(env));
+		return (cd_home(env, cwd));
 	if (ft_strequ(args[1], "-"))
-		return (cd_prev(env));
+		return (cd_prev(env, cwd));
 	if (check_file_to_cd(args[1]) == -1)
 		return (-1);
 	if (chdir(args[1]) == -1)
 	{
 		ft_printf_fd(STDERR_FILENO,
-		"cd: chdir: %s: failed to open", args[1]);
+		"cd: chdir: %s: failed to open\n", args[1]);
 		return (-1);
 	}
+	set_oldpwd(env, cwd);
 	return (1);
 }
